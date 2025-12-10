@@ -14,8 +14,14 @@ const Schema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    individualId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Individual",
+      require: true,
+    },
   },
   { timestamps: true }
 );
 
 module.exports = mongoose.model("Social", Schema);
+nhm;
