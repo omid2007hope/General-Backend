@@ -3,8 +3,6 @@
 import ImageModel from "../model/v1/Image.js";
 
 export default class BaseService {
-  model;
-
   constructor(model) {
     this.model = model;
   }
