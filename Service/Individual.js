@@ -1,4 +1,4 @@
 const model = require("../model/Individual");
-const baseService = require("../Service/BaseService");
+const BaseService = require("../Service/BaseService");
 
-module.exports = new (class Individual extends baseService {}(model))();
+module.exports = new (class Individual extends BaseService {})(model);

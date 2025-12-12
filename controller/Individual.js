@@ -1,7 +1,21 @@
+const individualService = require("../Service/Individual");
 class Individual {
-  createIndiviual(req, res) {
+  async createIndiviual(req, res) {
     try {
-      const {} = req.body;
+      const { firstName, lastName, jobTitle, description, skillTags } =
+        req.body;
+
+      const object = {
+        firstName: firstName,
+        lastName: lastName,
+        jobTitle: jobTitle,
+        description: description,
+        skillTags: skillTags,
+      };
+
+      const createObject = await individualService.createObject(object);
+
+      console.log(createObject);
     } catch (error) {
       return res.status(500).json({ error: JSON.stringify(error) });
     }

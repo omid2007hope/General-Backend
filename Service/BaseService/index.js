@@ -1,8 +1,6 @@
 /** @format */
 
-import ImageModel from "../model/v1/Image.js";
-
-export default class BaseService {
+class BaseService {
   constructor(model) {
     this.model = model;
   }
@@ -16,23 +14,6 @@ export default class BaseService {
 
   findAllWithSort = async (condition = {}, sort = {}) =>
     this.model.find({ ...condition, isDeleted: { $ne: true } }).sort(sort);
-
-  findAllWithImage = async (condition = {}, tableName, sort = "-createdAt") => {
-    const data = await this.model
-      .find({ ...condition, isDeleted: { $ne: true } })
-      .sort(sort);
-
-    return Promise.all(
-      data.map(async (item) => {
-        const Images = await ImageModel.find({
-          tableId: item._id,
-          tableName,
-        }).sort({ sort: 1, createdAt: 1 });
-
-        return { ...item.toObject(), Images };
-      })
-    );
-  };
 
   // =====================
   // RECURSIVE
@@ -91,81 +72,6 @@ export default class BaseService {
     }
   };
 
-  findAllRecursiveWithImage = async (
-    parentField,
-    tableName,
-    sort = "createdAt"
-  ) => {
-    try {
-      const parent = await this.model
-        .find({ [parentField]: null, isDeleted: { $ne: true } })
-        .sort(sort);
-
-      const getChildren = async (nodes) =>
-        Promise.all(
-          nodes.map(async (node) => {
-            const Images = await ImageModel.find({
-              tableId: node._id,
-              tableName,
-            }).sort({ sort: 1, createdAt: 1 });
-
-            const children = await this.model
-              .find({ [parentField]: node._id, isDeleted: { $ne: true } })
-              .sort(sort);
-
-            return {
-              ...node.toObject(),
-              child: children.length ? await getChildren(children) : [],
-              Images,
-            };
-          })
-        );
-
-      return getChildren(parent);
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
-
-  findAllRecursiveByConditionWithImage = async (
-    condition,
-    parentField,
-    tableName,
-    sort = "-createdAt"
-  ) => {
-    try {
-      const parent = await this.model
-        .find({ ...condition, isDeleted: { $ne: true } })
-        .sort(sort);
-
-      const getChildren = async (nodes) =>
-        Promise.all(
-          nodes.map(async (node) => {
-            const Images = await ImageModel.find({
-              tableId: node._id,
-              tableName,
-            }).sort({ sort: 1, createdAt: 1 });
-
-            const children = await this.model
-              .find({ [parentField]: node._id, isDeleted: { $ne: true } })
-              .sort(sort);
-
-            return {
-              ...node.toObject(),
-              child: children.length ? await getChildren(children) : [],
-              Images,
-            };
-          })
-        );
-
-      return getChildren(parent);
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
-
   // =====================
   // DELETED
   // =====================
@@ -190,90 +96,10 @@ export default class BaseService {
     };
   };
 
-  findAllWithPaginationWithImage = async (
-    condition,
-    { page = 1, limit = 10, sort },
-    tableName
-  ) => {
-    const data = await this.model
-      .find({ ...condition, isDeleted: { $ne: true } })
-      .sort(sort);
-
-    const total = data.length;
-    const pages = Math.ceil(total / limit);
-
-    const sliced = data.slice((page - 1) * limit, page * limit);
-
-    const result = await Promise.all(
-      sliced.map(async (item) => {
-        const Images = await ImageModel.find({
-          tableId: item._id,
-          tableName,
-        }).sort({ sort: 1, createdAt: 1 });
-
-        return { ...item.toObject(), Images };
-      })
-    );
-
-    return { data: result, metaData: { pages, total, currentPage: page } };
-  };
-
-  // =====================
-  // POPULATE + IMAGE
-  // =====================
-
-  findAllAndPopulateWithPaginationAndImage = async (
-    condition,
-    { page = 1, limit = 10, sort },
-    tableName,
-    populate,
-    sortedBy
-  ) => {
-    const data = await this.model
-      .find({ ...condition, isDeleted: { $ne: true } })
-      .populate(populate)
-      .sort(sortedBy);
-
-    const total = data.length;
-    const pages = Math.ceil(total / limit);
-
-    const sliced = data.slice((page - 1) * limit, page * limit);
-
-    const result = await Promise.all(
-      sliced.map(async (item) => {
-        const Images = await ImageModel.find({
-          tableId: item._id,
-          tableName,
-        }).sort({ sort: 1, createdAt: 1 });
-
-        return { ...item.toObject(), Images };
-      })
-    );
-
-    return { data: result, metaData: { pages, total, currentPage: page } };
-  };
-
   findAllAndPopulate = async (condition, populate) =>
     this.model
       .find({ ...condition, isDeleted: { $ne: true } })
       .populate(populate);
-
-  findAllAndPopulateImage = async (condition, tableName, populate) => {
-    const data = await this.model
-      .find({ ...condition, isDeleted: { $ne: true } })
-      .populate(populate);
-
-    return Promise.all(
-      data.map(async (item) => {
-        const Images = await ImageModel.find({
-          tableId: item._id,
-          tableName,
-        }).sort({ sort: 1, createdAt: 1 });
-
-        return { ...item.toObject(), Images };
-      })
-    );
-  };
 
   // =====================
   // FIND ONE
@@ -287,45 +113,10 @@ export default class BaseService {
   findOneByCondition = async (condition) =>
     this.model.findOne({ ...condition, isDeleted: { $ne: true } });
 
-  findOneByConditionWithImage = async (condition, tableName) => {
-    const item = await this.model.findOne({
-      ...condition,
-      isDeleted: { $ne: true },
-    });
-
-    if (!item) return null;
-
-    const Images = await ImageModel.find({
-      tableId: item._id,
-      tableName,
-    }).sort({ sort: 1, createdAt: 1 });
-
-    return { ...item.toObject(), Images };
-  };
-
   findOneByConditionAndPopulate = async (condition, populate) =>
     this.model
       .findOne({ ...condition, isDeleted: { $ne: true } })
       .populate(populate);
-
-  findOneByConditionAndPopulateWithImage = async (
-    condition,
-    tableName,
-    populate
-  ) => {
-    const item = await this.model
-      .findOne({ ...condition, isDeleted: { $ne: true } })
-      .populate(populate);
-
-    if (!item) return null;
-
-    const Images = await ImageModel.find({
-      tableId: item._id,
-      tableName,
-    }).sort({ sort: 1, createdAt: 1 });
-
-    return { ...item.toObject(), Images };
-  };
 
   // =====================
   // DELETE
@@ -409,3 +200,5 @@ export default class BaseService {
     return obj.save();
   };
 }
+
+module.exports = BaseService;
