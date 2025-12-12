@@ -15,6 +15,16 @@ class Individual {
 
       const createObject = await individualService.createObject(object);
 
+      if (!createObject) {
+        return res.status(400).json({
+          message: "Something went wrong",
+        });
+      }
+
+      return res.status(201).json({
+        data: createObject,
+      });
+
       console.log(createObject);
     } catch (error) {
       return res.status(500).json({ error: JSON.stringify(error) });
