@@ -1,3 +1,5 @@
+// importing individual service
+
 const individualService = require("../Service/Individual");
 class Individual {
   async createIndiviual(req, res) {
@@ -24,8 +26,6 @@ class Individual {
       return res.status(201).json({
         data: createObject,
       });
-
-      console.log(createObject);
     } catch (error) {
       return res.status(500).json({ error: JSON.stringify(error) });
     }

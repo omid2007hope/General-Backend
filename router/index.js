@@ -3,13 +3,9 @@ const express = require("express");
 // create a Router instance (call the function)
 const router = express.Router();
 
+// Import the Individual file from the router folder
+
 const Individual = require("./Individual");
-
-// mount router (order after middleware and route definitions is fine)
-
-const { collect } = require("../controller");
-
-router.post("/", collect);
 
 router.get("/", (req, res) => {
   res.send("server is running");

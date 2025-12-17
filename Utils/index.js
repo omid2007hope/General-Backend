@@ -1,9 +1,17 @@
+// Import Mongoose
+
 const mongoose = require("mongoose");
+
+// import config from config file
+
 const config = require("../config");
 
 const logger = console;
 
 function attachConnectionListeners() {
+  
+  // Mongo DB connection event listeners
+
   const conn = mongoose.connection;
 
   conn.on("connecting", () => logger.info("MongoDB: connecting"));

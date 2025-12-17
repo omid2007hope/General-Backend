@@ -1,9 +1,21 @@
+// Import express
+
 const express = require("express");
-const app = express();
+
+// Import the router and the Utils
+
 const router = require("./router");
 const util = require("./Utils");
 
+// const app is the same as express()
+
+const app = express();
+
+// Conect the backend to the database
+
 util.connectToDatabase().catch((err) => {
+  // Catch an error
+
   console.error("Failed to connect to database:", err);
 });
 
