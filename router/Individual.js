@@ -10,4 +10,9 @@ router.post(
   individualController.createIndiviual.bind(individualController)
 );
 
+router.get(
+  "/getAll",
+  individualController.getAllIndividual.bind(individualController)
+);
+
 module.exports = router;
