@@ -15,4 +15,9 @@ router.get(
   individualController.getAllIndividual.bind(individualController)
 );
 
+router.get(
+  "/getById/:id",
+  individualController.getById.bind(individualController)
+);
+
 module.exports = router;

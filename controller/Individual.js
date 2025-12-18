@@ -50,6 +50,30 @@ class Individual {
       return res.status(500).json({ error: JSON.stringify(error) });
     }
   }
+
+  async getById(req, res) {
+    try {
+      const { id } = req.params;
+
+      const individualData = await individualService.findOneByCondition({
+        _id: id,
+      });
+
+      if (!individualData) {
+        return res.status(204).json({
+          message: "No error to exist",
+        });
+      }
+
+      return res.status(200).json({
+        data: individualData,
+      });
+
+      //
+    } catch (error) {
+      return res.status(500).json({ error: JSON.stringify(error) });
+    }
+  }
 }
 
 module.exports = new Individual();
